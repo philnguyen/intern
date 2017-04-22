@@ -5,7 +5,7 @@
          "main.rkt")
 
 (define-interner (Setof String)
-  #:interned-type-name String-Set
+  #:as String-Set
   #:intern-function-name String-Set-of
   #:unintern-function-name of-String-Set)
 
