@@ -8,8 +8,7 @@
 
 (define-syntax define-interner
   (syntax-parser
-    [(_ T
-        #:as T*:id
+    [(_ T*:id T
         (~optional (~seq #:intern-function-name intern:id)
                    #:defaults ([intern (format-id #'T "~a-of" (syntax-e #'T*))]))
         (~optional (~seq #:unintern-function-name unintern:id)

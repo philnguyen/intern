@@ -16,15 +16,13 @@ raco pkg install intern
 
 The following example of interning a `Setof String`
 explicitly provides the default names to all optional arguments.
-Only `#:as` is mandatory.
 
 
 ```racket
 #lang typed/racket/base
 (require racket/set intern)
 
-(define-interner (Setof String)
-  #:as String-Set
+(define-interner String-Set (Setof String)
   #:intern-function-name String-Set-of
   #:unintern-function-name of-String-Set)
 ;; Generates:

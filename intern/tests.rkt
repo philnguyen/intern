@@ -4,8 +4,7 @@
          typed/rackunit
          "main.rkt")
 
-(define-interner (Setof String)
-  #:as String-Set
+(define-interner String-Set (Setof String)
   #:intern-function-name String-Set-of
   #:unintern-function-name of-String-Set)
 
@@ -14,4 +13,3 @@
 (define s₃ (String-Set-of (set-add (of-String-Set s₂) "qux")))
 (check-equal? (count-String-Set) 2)
 (check-equal? s₂ s₃)
-
