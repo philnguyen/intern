@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/philnguyen/z3-rkt.svg?branch=master)](https://travis-ci.org/philnguyen/intern) intern
+[![Build Status](https://travis-ci.org/philnguyen/intern.svg?branch=master)](https://travis-ci.org/philnguyen/intern) intern
 =========================================
 
 Library for type-safe interning of a type as new subtype of `Index` in Typed Racket.
