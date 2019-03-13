@@ -6,6 +6,33 @@
                      racket/syntax
                      syntax/parse))
 
+(: make-interner (∀ (X X*)
+                    (Index → X*)
+                    (→ (Mutable-HashTable X X*))
+                    Symbol
+                    →
+                    (Values (X → X*)
+                            (X* → X)
+                            (→ Index))))
+(define (make-interner mk-tag mk-m unintern-error-tag)
+  (define m   : (Mutable-HashTable X X*) (mk-m))
+  (define m⁻¹ : (Mutable-HashTable X* X) (make-hasheq))
+
+  (values
+   ;; intern
+   (λ (x)
+     (cond [(hash-ref m x #f) => values]
+           [else
+            (define x* (mk-tag (hash-count m)))
+            (hash-set! m   x x*)
+            (hash-set! m⁻¹ x* x)
+            x*]))
+   ;; unintern
+   (λ (x*)
+     (hash-ref m⁻¹ x* (λ () (error unintern-error-tag "nothing at ~a" x*))))
+   ;; count
+   (λ () (hash-count m⁻¹))))
+
 (define-syntax define-interner
   (syntax-parser
     [(_ T*:id T
@@ -21,24 +48,5 @@
      (define/with-syntax count-T* (format-id #'T "count-~a" (syntax-e #'T*)))
      (define/with-syntax mk-m (if T.eq? #'make-hasheq #'make-hash))
      #'(begin
-         ;; Private
-         (define m   : (HashTable T  T*) (mk-m))
-         (define m⁻¹ : (HashTable T* T ) (make-hasheq))
-         
-         ;; Public
          (define-new-subtype T* (->T* Index))
-         
-         (: intern : T → T*)
-         (define (intern t)
-           (cond [(hash-ref m t #f) => values]
-                 [else
-                  (define t* (->T* (hash-count m)))
-                  (hash-set! m   t  t*)
-                  (hash-set! m⁻¹ t* t )
-                  t*]))
-         
-         (: unintern : T* → T)
-         (define (unintern t*)
-           (hash-ref m⁻¹ t* (λ () (error 'unintern "nothing at ~a" t*))))
-
-         (define (count-T*) (hash-count m⁻¹)))]))
+         (define-values (intern unintern count-T*) ((inst make-interner T T*) ->T* mk-m 'unintern)))]))
